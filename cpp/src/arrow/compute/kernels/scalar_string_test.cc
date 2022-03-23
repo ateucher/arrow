@@ -1458,6 +1458,9 @@ TYPED_TEST(TestStringKernels, MatchSubstringRegex) {
   this->CheckUnary("match_substring_regex", "[]", boolean(), "[]", &options);
   this->CheckUnary("match_substring_regex", R"(["abc", "acb", "cab", null, "bac", "AB"])",
                    boolean(), "[true, false, true, null, false, false]", &options);
+  MatchSubstringOptions options_null_as_false{"ab", /*null_as_false=*/true};
+  this->CheckUnary("match_substring_regex", R"(["abc", "acb", "cab", null, "bac", "AB"])",
+                   boolean(), "[true, false, true, false, false, false]", &options_null_as_false);
   MatchSubstringOptions options_repeated{"(ab){2}"};
   this->CheckUnary("match_substring_regex", R"(["abab", "ab", "cababc", null, "bac"])",
                    boolean(), "[true, false, true, null, false]", &options_repeated);

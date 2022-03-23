@@ -197,7 +197,7 @@ register_bindings_string_regex <- function() {
     Expression$create(
       arrow_fun,
       x,
-      options = list(pattern = pattern, ignore_case = ignore.case)
+      options = list(pattern = pattern, ignore_case = ignore.case, null_as_false = TRUE)
     )
   })
 

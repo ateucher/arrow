@@ -312,11 +312,15 @@ std::shared_ptr<arrow::compute::FunctionOptions> make_compute_options(
       func_name == "count_substring_regex") {
     using Options = arrow::compute::MatchSubstringOptions;
     bool ignore_case = false;
+    bool null_as_false = false;
     if (!Rf_isNull(options["ignore_case"])) {
       ignore_case = cpp11::as_cpp<bool>(options["ignore_case"]);
     }
+    if (!Rf_isNull(options["null_as_false"])) {
+      ignore_case = cpp11::as_cpp<bool>(options["null_as_false"]);
+    }
     return std::make_shared<Options>(cpp11::as_cpp<std::string>(options["pattern"]),
-                                     ignore_case);
+                                     ignore_case, null_as_false);
   }
 
   if (func_name == "replace_substring" || func_name == "replace_substring_regex") {

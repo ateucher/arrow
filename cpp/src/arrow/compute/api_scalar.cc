@@ -312,7 +312,8 @@ static auto kMapLookupOptionsType = GetFunctionOptionsType<MapLookupOptions>(
     DataMember("query_key", &MapLookupOptions::query_key));
 static auto kMatchSubstringOptionsType = GetFunctionOptionsType<MatchSubstringOptions>(
     DataMember("pattern", &MatchSubstringOptions::pattern),
-    DataMember("ignore_case", &MatchSubstringOptions::ignore_case));
+    DataMember("ignore_case", &MatchSubstringOptions::ignore_case),
+    DataMember("null_as_false", &MatchSubstringOptions::null_as_false));
 static auto kNullOptionsType = GetFunctionOptionsType<NullOptions>(
     DataMember("nan_is_null", &NullOptions::nan_is_null));
 static auto kPadOptionsType = GetFunctionOptionsType<PadOptions>(
@@ -433,10 +434,11 @@ MapLookupOptions::MapLookupOptions()
     : MapLookupOptions(std::make_shared<NullScalar>(), Occurrence::FIRST) {}
 constexpr char MapLookupOptions::kTypeName[];
 
-MatchSubstringOptions::MatchSubstringOptions(std::string pattern, bool ignore_case)
+MatchSubstringOptions::MatchSubstringOptions(std::string pattern, bool ignore_case, bool null_as_false)
     : FunctionOptions(internal::kMatchSubstringOptionsType),
       pattern(std::move(pattern)),
-      ignore_case(ignore_case) {}
+      ignore_case(ignore_case),
+      null_as_false(null_as_false) {}
 MatchSubstringOptions::MatchSubstringOptions() : MatchSubstringOptions("", false) {}
 constexpr char MatchSubstringOptions::kTypeName[];
 

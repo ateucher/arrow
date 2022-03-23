@@ -1363,6 +1363,7 @@ struct PlainSubstringMatcher {
     int64_t pattern_pos = 0;
     int64_t pos = 0;
     if (pattern_length == 0) return 0;
+    if (current.empty() && options_.null_as_false) return 0;
     for (const auto c : current) {
       while ((pattern_pos >= 0) && (options_.pattern[pattern_pos] != c)) {
         pattern_pos = prefix_table[pattern_pos];
@@ -1425,20 +1426,21 @@ struct RegexSubstringMatcher {
   const RE2 regex_match_;
 
   static Result<std::unique_ptr<RegexSubstringMatcher>> Make(
-      const MatchSubstringOptions& options, bool is_utf8 = true, bool literal = false) {
+      const MatchSubstringOptions& options, bool is_utf8 = true, bool literal = false, bool null_as_false = false) {
     auto matcher =
-        ::arrow::internal::make_unique<RegexSubstringMatcher>(options, is_utf8, literal);
+        ::arrow::internal::make_unique<RegexSubstringMatcher>(options, is_utf8, literal, null_as_false);
     RETURN_NOT_OK(RegexStatus(matcher->regex_match_));
     return std::move(matcher);
   }
 
   explicit RegexSubstringMatcher(const MatchSubstringOptions& options,
-                                 bool is_utf8 = true, bool literal = false)
+                                 bool is_utf8 = true, bool literal = false, bool null_as_false = false)
       : options_(options),
         regex_match_(options_.pattern,
                      MakeRE2Options(is_utf8, options.ignore_case, literal)) {}
 
   bool Match(util::string_view current) const {
+    if (current.empty() && options_.null_as_false) return false;
     auto piece = re2::StringPiece(current.data(), current.length());
     return RE2::PartialMatch(piece, regex_match_);
   }

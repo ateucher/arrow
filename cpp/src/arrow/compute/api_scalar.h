@@ -160,7 +160,7 @@ class ARROW_EXPORT JoinOptions : public FunctionOptions {
 
 class ARROW_EXPORT MatchSubstringOptions : public FunctionOptions {
  public:
-  explicit MatchSubstringOptions(std::string pattern, bool ignore_case = false);
+  explicit MatchSubstringOptions(std::string pattern, bool ignore_case = false, bool null_as_false = false);
   MatchSubstringOptions();
   static constexpr char const kTypeName[] = "MatchSubstringOptions";
 
@@ -168,6 +168,8 @@ class ARROW_EXPORT MatchSubstringOptions : public FunctionOptions {
   std::string pattern;
   /// Whether to perform a case-insensitive match.
   bool ignore_case;
+  /// whether to return comparisons against nulls as false
+  bool null_as_false;
 };
 
 class ARROW_EXPORT SplitOptions : public FunctionOptions {
