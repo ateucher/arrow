@@ -1361,6 +1361,9 @@ TYPED_TEST(TestBaseBinaryKernels, MatchSubstring) {
   this->CheckUnary("match_substring", "[]", boolean(), "[]", &options);
   this->CheckUnary("match_substring", R"(["abc", "acb", "cab", null, "bac", "AB"])",
                    boolean(), "[true, false, true, null, false, false]", &options);
+  MatchSubstringOptions options_null_as_false{"ab", /*null_as_false=*/true};
+  this->CheckUnary("match_substring", R"(["abc", "acb", "cab", null, "bac", "AB"])",
+                   boolean(), "[true, false, true, false, false, false]", &options_null_as_false);
 
   MatchSubstringOptions options_repeated{"abab"};
   this->CheckUnary("match_substring", R"(["abab", "ab", "cababc", null, "bac"])",
