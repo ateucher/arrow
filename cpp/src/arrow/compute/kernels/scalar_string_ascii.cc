@@ -1364,7 +1364,7 @@ struct PlainSubstringMatcher {
     int64_t pattern_pos = 0;
     int64_t pos = 0;
     if (pattern_length == 0) return 0;
-    if (current.empty() && options_.null_as_false) return 0;
+    if (current.empty() && options_.null_as_false) return -1;
     for (const auto c : current) {
       while ((pattern_pos >= 0) && (options_.pattern[pattern_pos] != c)) {
         pattern_pos = prefix_table[pattern_pos];
@@ -1441,14 +1441,27 @@ struct RegexSubstringMatcher {
                      MakeRE2Options(is_utf8, options.ignore_case, literal)) {}
 
   bool Match(util::string_view current) const {
-    // if (current.empty() && options_.null_as_false) return false;
+      std::cout << "Value:" << std::endl;
+      std::cout << current.data() << std::endl;
+      std::cout << "null_as_empty:" << std::endl;
+      std::cout << options_.null_as_false << std::endl;
+      std::cout << "current.empty():" << std::endl;
+      std::cout << current.empty() << std::endl;
+
+    // using current.empty() doesn't differentiate between a NULL
+    // and the empty string '', so this is probably not ideal.
+    // also despite the option and this logic working (i.e.,
+    // we go here when these conditions are true), 
+    // it still returns null so it is being short-circuited somewhere
+    // but I don't know where...
     if (options_.null_as_false && current.empty()) {
       std::cout << "This is false" << std::endl;
-      std::cout << current.data();
       return false;
+    } else {
+      std::cout << "In the re2 block!" << std::endl;
+      auto piece = re2::StringPiece(current.data(), current.length());
+      return RE2::PartialMatch(piece, regex_match_);
     }
-    auto piece = re2::StringPiece(current.data(), current.length());
-    return RE2::PartialMatch(piece, regex_match_);
   }
 };
 #endif
